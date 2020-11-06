@@ -12,7 +12,7 @@ Connect-CloudiQ
 # Minimize overspending by removing subscriptions
 # that are not in use.
 
-. ($PSScriptRoot + "\AzureAD.Standard.Preview\0.1.599.7\AzureAD.Standard.Preview.psd1")
+Import-Module -Name ($PSScriptRoot + "\AzureAD.Standard.Preview\0.1.599.7\AzureAD.Standard.Preview.psd1") -Force -ErrorAction Stop
 . ($PSScriptRoot + "\ServicePlanSku.ps1")
 
 $tenant = Get-AzureADTenantDetail | Select-Object -ExpandProperty ObjectId
