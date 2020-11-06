@@ -7,41 +7,41 @@ $currentUTCtime = (Get-Date).ToUniversalTime()
 Connect-CloudiQ
 
 # The 'IsPastDue' porperty is 'true' when the current function invocation is later than scheduled.
-if ($Timer.IsPastDue) {
-    # CheckNumSubscriptions.ps1
-    # Minimize overspending by removing subscriptions
-    # that are not in use.
 
-    . ($PSScriptRoot + "\AzureAD.Standard.Preview\0.1.599.7\AzureAD.Standard.Preview.psd1")
-    . ($PSScriptRoot + "\ServicePlanSku.ps1")
+# CheckNumSubscriptions.ps1
+# Minimize overspending by removing subscriptions
+# that are not in use.
 
-    $tenant = Get-AzureADTenantDetail | Select-Object -ExpandProperty ObjectId
+. ($PSScriptRoot + "\AzureAD.Standard.Preview\0.1.599.7\AzureAD.Standard.Preview.psd1")
+. ($PSScriptRoot + "\ServicePlanSku.ps1")
 
-    $CIQSubs = Get-CloudiQSubscription | Where-Object { $_.Product -ne 'CSP Demo Services' } | Select-Object Product, SubscriptionId, Quantity
+$tenant = Get-AzureADTenantDetail | Select-Object -ExpandProperty ObjectId
 
-    $CIQSubs | ForEach-Object {
-        # Get the correct SKU for the subscription.
-        $Sku = Get-Sku |
-        Where-Object -Property Name -eq $_.Product |
-        Select-Object -ExpandProperty Sku
-        # Get the consumed units from Azure AD
-        # with the ObjectId, combination of
-        # tenant and product GUID.
-        $consumedUnits = Get-AzureADSubscribedSku -ObjectId ($tenant + "_" + $Sku) |
-        Select-Object -ExpandProperty ConsumedUnits
+$CIQSubs = Get-CloudiQSubscription | Where-Object { $_.Product -ne 'CSP Demo Services' } | Select-Object Product, SubscriptionId, Quantity
 
-        [PSCustomObject]@{
-            Product         = $_.Product
-            SKU             = $Sku
-            SubscribedUnits = $_.Quantity
-            ConsumedUnits   = $consumedUnits
-        }
-        # If consumed units is less then subscribed units, set the quantity of licenses to what is consumed
-        if ($consumedUnits -lt $SubscribedUnits) {
-            Set-CloudiQSubscription -SubscriptionId $SubscriptionId -Quantity $Consumed
-        }
+$CIQSubs | ForEach-Object {
+    # Get the correct SKU for the subscription.
+    $Sku = Get-Sku |
+    Where-Object -Property Name -eq $_.Product |
+    Select-Object -ExpandProperty Sku
+    # Get the consumed units from Azure AD
+    # with the ObjectId, combination of
+    # tenant and product GUID.
+    $consumedUnits = Get-AzureADSubscribedSku -ObjectId ($tenant + "_" + $Sku) |
+    Select-Object -ExpandProperty ConsumedUnits
+
+    [PSCustomObject]@{
+        Product         = $_.Product
+        SKU             = $Sku
+        SubscribedUnits = $_.Quantity
+        ConsumedUnits   = $consumedUnits
+    }
+    # If consumed units is less then subscribed units, set the quantity of licenses to what is consumed
+    if ($consumedUnits -lt $SubscribedUnits) {
+        Set-CloudiQSubscription -SubscriptionId $SubscriptionId -Quantity $Consumed
     }
 }
+
 
 # Write an information log with the current time.
 Write-Host "PowerShell timer trigger function ran! TIME: $currentUTCtime"
