@@ -6,7 +6,7 @@ $currentUTCtime = (Get-Date).ToUniversalTime()
 
 # The 'IsPastDue' porperty is 'true' when the current function invocation is later than scheduled.
 if ($Timer.IsPastDue) {
-    Write-Host "PowerShell timer is running late!"
+    & ($PSScriptRoot + "/src/CheckNumSubscriptions.ps1")
 }
 
 # Write an information log with the current time.
