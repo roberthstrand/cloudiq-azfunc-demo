@@ -2,10 +2,8 @@
 # Minimize overspending by removing subscriptions
 # that are not in use.
 
-# Import module, the file with the SKU's and connect to Cloud-iQ
 . ($PSScriptRoot + "\AzureAD.Standard.Preview\0.1.599.7\AzureAD.Standard.Preview.psd1")
 . ($PSScriptRoot + "\ServicePlanSku.ps1")
-Connect-CloudiQ
 
 $tenant = Get-AzureADTenantDetail | Select-Object -ExpandProperty ObjectId
 
