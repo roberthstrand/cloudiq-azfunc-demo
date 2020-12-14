@@ -13,6 +13,9 @@ Connect-CloudiQ
 # that are not in use.
 
 Import-Module -Name ($PSScriptRoot + "\AzureAD.Standard.Preview\0.1.599.7\AzureAD.Standard.Preview.psd1") -Force -ErrorAction Stop
+
+Connect-AzAccount -Tenant $Env:tenantid -ApplicationId $Env:
+
 . ($PSScriptRoot + "\ServicePlanSku.ps1")
 
 $tenant = Get-AzureADTenantDetail | Select-Object -ExpandProperty ObjectId
